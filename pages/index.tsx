@@ -2,6 +2,7 @@ import Image from "next/image";
 import localFont from "next/font/local";
 import { BsBell, BsBookmark, BsEnvelope, BsTwitter } from "react-icons/bs";
 import { BiHomeCircle, BiHash, BiUser, BiMoney } from "react-icons/bi";
+import { GoogleLogin } from "@react-oauth/google";
 import { Inter } from "next/font/google";
 import FeedCard from "@/components/FeedCard/index";
 import { SlOptions } from "react-icons/sl";
@@ -96,7 +97,12 @@ export default function Home() {
           <FeedCard />
           <FeedCard />
         </div>
-        <div className="col-span-3"></div>
+        <div className="col-span-3 p-5">
+          <div className=" p-5 bg-slate-700 px-5 py-6 w-fit rounded-lg text-center">
+          <h1 className="my-2 text-2xl">New to Twitter ?</h1>
+            <GoogleLogin onSuccess={(cred) => console.log(cred)} />
+          </div>
+        </div>
       </div>
     </div>
   );
