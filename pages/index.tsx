@@ -2,10 +2,15 @@ import Image from "next/image";
 import localFont from "next/font/local";
 import { BsBell, BsBookmark, BsEnvelope, BsTwitter } from "react-icons/bs";
 import { BiHomeCircle, BiHash, BiUser, BiMoney } from "react-icons/bi";
-import { GoogleLogin } from "@react-oauth/google";
+import { CredentialResponse, GoogleLogin } from "@react-oauth/google";
 import { Inter } from "next/font/google";
 import FeedCard from "@/components/FeedCard/index";
 import { SlOptions } from "react-icons/sl";
+import { useCallback } from "react";
+import toast from "react-hot-toast";
+import { graphql } from "@/gql";
+import { graphqlClient } from "@/clients/api";
+import { verifyUserGoogleTokenQuery } from "@/graphql/query/user";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -58,6 +63,18 @@ const sidebarMenuItems: TwitterSidebarButton[] = [
 ];
 
 export default function Home() {
+  const handleLoginWithGoogle = useCallback(
+    async (cred: CredentialResponse) => {
+      const googleToken = cred.credential;
+      if (!googleToken) return toast.error(`Google token not found `);
+       const {verifyGoogleToken} = await graphqlClient.request(verifyUserGoogleTokenQuery, {token: googleToken});
+       
+      toast.success('verifies Success');
+      console.log(verifyGoogleToken);
+      if(verifyGoogleToken) window.localStorage.setItem('__twitter_token',verifyGoogleToken)
+    },
+    []
+  );
   return (
     <div>
       <div className="grid grid-cols-12 h-screen w-screen  px-56 ">
@@ -99,8 +116,8 @@ export default function Home() {
         </div>
         <div className="col-span-3 p-5">
           <div className=" p-5 bg-slate-700 px-5 py-6 w-fit rounded-lg text-center">
-          <h1 className="my-2 text-2xl">New to Twitter ?</h1>
-            <GoogleLogin onSuccess={(cred) => console.log(cred)} />
+            <h1 className="my-2 text-2xl">New to Twitter ?</h1>
+            <GoogleLogin onSuccess= { handleLoginWithGoogle} />
           </div>
         </div>
       </div>
