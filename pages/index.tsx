@@ -1,7 +1,7 @@
 import Image from "next/image";
 // import localFont from "next/font/local";
 import { BsBell, BsBookmark, BsEnvelope, BsTwitter } from "react-icons/bs";
-import { BiHomeCircle, BiHash, BiUser, BiMoney } from "react-icons/bi";
+import { BiHomeCircle, BiHash, BiUser, BiMoney, BiImageAlt } from "react-icons/bi";
 import { CredentialResponse, GoogleLogin } from "@react-oauth/google";
 // import { Inter } from "next/font/google";
 import FeedCard from "@/components/FeedCard/index";
@@ -13,16 +13,16 @@ import { graphqlClient } from "@/clients/api";
 import { verifyUserGoogleTokenQuery } from "@/graphql/query/user";
 import { useCurrentUser } from "@/hooks/user";
 import { useQueryClient } from "@tanstack/react-query";
-// 
+//
 // const geistSans = localFont({
-  // src: "./fonts/GeistVF.woff",
-  // variable: "--font-geist-sans",
-  // weight: "100 900",
+// src: "./fonts/GeistVF.woff",
+// variable: "--font-geist-sans",
+// weight: "100 900",
 // });
 // const geistMono = localFont({
-  // src: "./fonts/GeistMonoVF.woff",
-  // variable: "--font-geist-mono",
-  // weight: "100 900",
+// src: "./fonts/GeistMonoVF.woff",
+// variable: "--font-geist-mono",
+// weight: "100 900",
 // });
 
 interface TwitterSidebarButton {
@@ -69,6 +69,13 @@ export default function Home() {
 
   const queryClient = useQueryClient();
   console.log(user);
+  const handleSelectImage = useCallback(()=> {
+    const input = document.createElement('input');
+    input.setAttribute("type", "file");
+    input.setAttribute("accept", "image/*");
+    input.click();
+  
+  },[]);
   const handleLoginWithGoogle = useCallback(
     async (cred: CredentialResponse) => {
       const googleToken = cred.credential;
@@ -116,7 +123,7 @@ export default function Home() {
             </div>
           </div>
           {user && (
-            <div className=" absolute bottom-5 flex gap-2 items-center bg-slate-800 px-3  py-2 rounded-full w-fit">
+            <div className=" absolute bottom-5 flex gap-2 items-center bg-slate-800 px-5  py-2 rounded-full w-full">
               {user && user.profileImageURL && (
                 <Image
                   className="rounded-full"
@@ -127,7 +134,7 @@ export default function Home() {
                 />
               )}
               <div>
-                <h3 className="text-xl px-5 py-2 text-center text">
+                <h3 className="text-xl px-2 py-1 text-center text-xl">
                   {user.firstName}
                   {user.lastName}
                 </h3>
@@ -136,6 +143,37 @@ export default function Home() {
           )}
         </div>
         <div className="col-span-5 border-r-[1px]  border-l-[1px]  mt-4  h-screen overflow-scroll border-gray-600 ">
+          <div>
+            <div className="border border-r-0 border-l-0 border-b-0 border-gray-600 p-5 hover:bg-slate-900 transition-all cursor-pointer ">
+              {" "}
+            </div>
+            <div className="grid grid-cols-12 gap-3 ">
+              <div className="col-span-1">
+                {user?.profileImageURL && (
+                  <Image
+                    className="rounded-full"
+                    src={user?.profileImageURL}
+                    alt="user-image"
+                    height={50}
+                    width={50}
+                  />
+                )}
+              </div>
+              <div className="col-span-11 ">
+                <textarea
+                  className=" w-full bg-transparent text-xl px-3 border-b border-slate-700"
+                  placeholder="What's happening?"
+                  rows={3}
+                ></textarea>
+                <div className="mt-2 flex justify-between items-center mb-4 mr-2">
+                <BiImageAlt onClick={handleSelectImage} className="text-xl"/>
+                <button className="bg-[#1d9bf0] font-semibold text-sm  px-2 py-1 rounded-xl  ">
+                Tweet
+              </button>
+                </div>
+              </div>
+            </div>
+          </div>
           <FeedCard />
           <FeedCard />
           <FeedCard />
