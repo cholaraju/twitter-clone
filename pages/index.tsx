@@ -1,29 +1,29 @@
 import Image from "next/image";
-import localFont from "next/font/local";
+// import localFont from "next/font/local";
 import { BsBell, BsBookmark, BsEnvelope, BsTwitter } from "react-icons/bs";
 import { BiHomeCircle, BiHash, BiUser, BiMoney } from "react-icons/bi";
 import { CredentialResponse, GoogleLogin } from "@react-oauth/google";
-import { Inter } from "next/font/google";
+// import { Inter } from "next/font/google";
 import FeedCard from "@/components/FeedCard/index";
 import { SlOptions } from "react-icons/sl";
 import { useCallback } from "react";
 import toast from "react-hot-toast";
-import { graphql } from "@/gql";
+// import { graphql } from "@/gql";
 import { graphqlClient } from "@/clients/api";
 import { verifyUserGoogleTokenQuery } from "@/graphql/query/user";
 import { useCurrentUser } from "@/hooks/user";
 import { useQueryClient } from "@tanstack/react-query";
-
-const geistSans = localFont({
-  src: "./fonts/GeistVF.woff",
-  variable: "--font-geist-sans",
-  weight: "100 900",
-});
-const geistMono = localFont({
-  src: "./fonts/GeistMonoVF.woff",
-  variable: "--font-geist-mono",
-  weight: "100 900",
-});
+// 
+// const geistSans = localFont({
+  // src: "./fonts/GeistVF.woff",
+  // variable: "--font-geist-sans",
+  // weight: "100 900",
+// });
+// const geistMono = localFont({
+  // src: "./fonts/GeistMonoVF.woff",
+  // variable: "--font-geist-mono",
+  // weight: "100 900",
+// });
 
 interface TwitterSidebarButton {
   title: string;
@@ -118,7 +118,7 @@ export default function Home() {
           {user && (
             <div className=" absolute bottom-5 flex gap-2 items-center bg-slate-800 px-3  py-2 rounded-full w-fit">
               {user && user.profileImageURL && (
-                <img
+                <Image
                   className="rounded-full"
                   src={user?.profileImageURL}
                   alt="user-image"
