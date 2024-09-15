@@ -1,7 +1,14 @@
 import Image from "next/image";
+import { useState } from "react";
 // import localFont from "next/font/local";
 import { BsBell, BsBookmark, BsEnvelope, BsTwitter } from "react-icons/bs";
-import { BiHomeCircle, BiHash, BiUser, BiMoney, BiImageAlt } from "react-icons/bi";
+import {
+  BiHomeCircle,
+  BiHash,
+  BiUser,
+  BiMoney,
+  BiImageAlt,
+} from "react-icons/bi";
 import { CredentialResponse, GoogleLogin } from "@react-oauth/google";
 // import { Inter } from "next/font/google";
 import FeedCard from "@/components/FeedCard/index";
@@ -13,6 +20,8 @@ import { graphqlClient } from "@/clients/api";
 import { verifyUserGoogleTokenQuery } from "@/graphql/query/user";
 import { useCurrentUser } from "@/hooks/user";
 import { useQueryClient } from "@tanstack/react-query";
+import { useCreateTweet, useGetAllTweets } from "@/hooks/tweet";
+import { Tweet } from "@/gql/graphql";
 //
 // const geistSans = localFont({
 // src: "./fonts/GeistVF.woff",
@@ -66,16 +75,25 @@ const sidebarMenuItems: TwitterSidebarButton[] = [
 
 export default function Home() {
   const { user } = useCurrentUser();
+  const { tweets = [] } = useGetAllTweets();
+  const {mutate} = useCreateTweet()
 
   const queryClient = useQueryClient();
-  console.log(user);
-  const handleSelectImage = useCallback(()=> {
-    const input = document.createElement('input');
+  
+  const [content, setContent]  =  useState('');
+  
+  // console.log(user);
+  const handleSelectImage = useCallback(() => {
+    const input = document.createElement("input");
     input.setAttribute("type", "file");
     input.setAttribute("accept", "image/*");
     input.click();
-  
-  },[]);
+  }, []);
+  const handleCreateTweet = useCallback(() => {
+    mutate({
+      content,
+    });
+  },[content, mutate]);
   const handleLoginWithGoogle = useCallback(
     async (cred: CredentialResponse) => {
       const googleToken = cred.credential;
@@ -134,7 +152,7 @@ export default function Home() {
                 />
               )}
               <div>
-                <h3 className="text-xl px-2 py-1 text-center text-xl">
+                <h3 className="text-xl px-2 py-1 text-center ">
                   {user.firstName}
                   {user.lastName}
                 </h3>
@@ -161,30 +179,24 @@ export default function Home() {
               </div>
               <div className="col-span-11 ">
                 <textarea
+                 value={content}
+                 onChange={e => setContent(e.target.value)}
                   className=" w-full bg-transparent text-xl px-3 border-b border-slate-700"
                   placeholder="What's happening?"
                   rows={3}
                 ></textarea>
                 <div className="mt-2 flex justify-between items-center mb-4 mr-2">
-                <BiImageAlt onClick={handleSelectImage} className="text-xl"/>
-                <button className="bg-[#1d9bf0] font-semibold text-sm  px-2 py-1 rounded-xl  ">
-                Tweet
-              </button>
+                  <BiImageAlt onClick={handleSelectImage} className="text-xl" />
+                  <button onClick = {handleCreateTweet} className="bg-[#1d9bf0] font-semibold text-sm  px-2 py-1 rounded-xl  ">
+                    Tweet
+                  </button>
                 </div>
               </div>
             </div>
           </div>
-          <FeedCard />
-          <FeedCard />
-          <FeedCard />
-          <FeedCard />
-          <FeedCard />
-          <FeedCard />
-          <FeedCard />
-          <FeedCard />
-          <FeedCard />
-          <FeedCard />
-          <FeedCard />
+          {tweets?.map((tweet) =>
+            tweet ? <FeedCard key={tweet?.id} data={tweet as Tweet} /> : null
+          )}
         </div>
         <div className="col-span-3 p-5 ">
           {!user && (
